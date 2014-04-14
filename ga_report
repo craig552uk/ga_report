@@ -1,0 +1,8 @@
+#!/bin/bash
+# Wrapper script for ga_reports.py
+# Bung it in your ~/bin and update the paths
+
+PYTHON="/usr/bin/python"
+GA_REPORT="ga_report.py"
+
+$PYTHON $GA_REPORT $*
