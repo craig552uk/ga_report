@@ -22,6 +22,7 @@ parser = OptionParser(usage="Usage: ga_report [options]", description=DESCRIPTIO
 parser.add_option("-F",  "--field_seperator", dest="field_seperator", metavar="FIELD_SEPERATOR", default=",",   help="The field seperator in the output.")
 parser.add_option("-H",  "--headings",        dest="headings",        action="store_true",       default=False, help="Show filed headings in the output")
 parser.add_option("-L",  "--list_profiles",   dest="list_profiles",   action="store_true",       default=False, help="List all Profiles available to the authenticated user (rate limit permitting)")
+parser.add_option("-P",  "--fetch_all_pages", dest="fetch_all_pages", action="store_true",       default=False, help="If there is more than one page of results, fetch them all")
 
 group  = OptionGroup(parser, "Google Analytics Reporting Options")
 group.add_option("-b",  "--start_date",      dest="start_date",      metavar="START_DATE",      default=None,  help="Beginning date to retrieve data in format YYYY-MM-DD.")
@@ -62,19 +63,24 @@ def list_profiles():
 def run_report(options):
     """Run a GA Report using options on the command line"""
     try:
-        report = GA.get_report(
-            profile_id     = options.profile_id,
-            start_date     = options.start_date,
-            end_date       = options.end_date,
-            dimensions     = options.dimensions,
-            metrics        = options.metrics,
-            segment        = options.segment,
-            filters        = options.filters,
-            sort           = options.sort,
-            max_results    = options.max_results,
-            sampling_level = options.sampling_level,
-            start_index    = options.start_index,
-        )
+
+        query = {
+            'profile_id':     options.profile_id,
+            'start_date':     options.start_date,
+            'end_date':       options.end_date,
+            'dimensions':     options.dimensions,
+            'metrics':        options.metrics,
+            'segment':        options.segment,
+            'filters':        options.filters,
+            'sort':           options.sort,
+            'max_results':    options.max_results,
+            'sampling_level': options.sampling_level,
+            'start_index':    options.start_index,
+        }
+
+        # Fetch data
+        report = GA.get_report(**query)
+        sum_results = len(report.get('rows'))
 
         # Print field headings
         if options.headings:
@@ -86,6 +92,18 @@ def run_report(options):
         # Print data
         for row in report.get('rows'):
             print options.field_seperator.join(row)
+
+        while options.fetch_all_pages and report.get('nextLink'):
+            
+            # Fetch subsequent pages if there are any
+            query['start_index'] = sum_results + 1
+            report = GA.get_report(**query)
+            sum_results += len(report.get('rows'))
+
+            # Print data
+            for row in report.get('rows'):
+                print options.field_seperator.join(row)
+
 
     except TypeError as e:
         print >> sys.stderr, "ERROR: %s" % e
