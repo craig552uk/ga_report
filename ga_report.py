@@ -85,13 +85,13 @@ def run_report(options):
         # Print field headings
         if options.headings:
             if options.dimensions:
-                print options.field_seperator.join((options.dimensions + "," + options.metrics).split(","))
+                print options.field_seperator.join((options.dimensions + "," + options.metrics).split(",")).encode('utf-8')
             else:
-                print options.field_seperator.join(options.metrics.split(","))
+                print options.field_seperator.join(options.metrics.split(",")).encode('utf-8')
 
         # Print data
         for row in report.get('rows'):
-            print options.field_seperator.join(row)
+            print options.field_seperator.join(row).encode('utf-8')
 
         while options.fetch_all_pages and report.get('nextLink'):
             
@@ -102,7 +102,7 @@ def run_report(options):
 
             # Print data
             for row in report.get('rows'):
-                print options.field_seperator.join(row)
+                print options.field_seperator.join(row).encode('utf-8')
 
 
     except TypeError as e:
