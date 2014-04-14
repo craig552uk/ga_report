@@ -1,9 +1,14 @@
 
+# GA Report
+
 A command line tool for querying the Google Analytics Reporting API.
 
 For more information about API options see: 
 https://developers.google.com/analytics/devguides/reporting/core/v3/reference
 https://developers.google.com/analytics/devguides/reporting/core/dimsmets
+
+Author: Craig russell <craig@craig-russell.co.uk>    
+Version: 0.1
 
 ## Installation
 
@@ -11,8 +16,7 @@ Install Google API Python client libraries
 
     pip install --upgrade google-api-python-client
 
-Create `client_secrets.json` in the root folder
-
+Register a project in the Google Developers Console and create a `ga_client_secrets.json` file in the project root. https://developers.google.com/analytics/solutions/articles/hello-analytics-api#register_project
 
 ## Usage
      Usage: ga_report [options]
